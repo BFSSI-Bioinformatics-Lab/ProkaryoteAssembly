@@ -34,14 +34,12 @@ def convert_to_path(ctx, param, value):
 @click.command()
 @click.option('-1', '--fwd_reads',
               type=click.Path(exists=True),
-              required=False,
-              default=None,
+              required=True,
               help='Path to forward reads (R1).',
               callback=convert_to_path)
 @click.option('-2', '--rev_reads',
               type=click.Path(exists=True),
-              required=False,
-              default=None,
+              required=True,
               help='Path to reverse reads (R2).',
               callback=convert_to_path)
 @click.option('-o', '--out_dir',

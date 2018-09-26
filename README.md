@@ -16,9 +16,9 @@ The first script, `assemble.py`, operates on a single sample at a time.
 Usage: assemble.py [OPTIONS]
 
 Options:
-  -1, --fwd_reads PATH  Path to forward reads (R1).
-  -2, --rev_reads PATH  Path to reverse reads (R2).
-  -o, --out_dir PATH    Root directory to store all output files  [required]
+  -1, --fwd_reads PATH  Path to forward reads (R1).  [required]
+  -2, --rev_reads PATH  Path to reverse reads (R2).  [required]
+  -o, --out_dir PATH    Root directory to store all output files.  [required]
   --version             Specify this flag to print the version and exit.
   --help                Show this message and exit.
 ```
