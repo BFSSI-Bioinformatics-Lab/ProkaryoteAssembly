@@ -1,7 +1,15 @@
 # ProkaryoteAssembly
 
-Two simple scripts to assemble prokaryotic genomes using paired-end reads.+
+Two simple scripts to assemble prokaryotic genomes using paired-end reads.
 
+## Pipeline Overview
+1. QC on reads with bbduk.sh (adapter trimming/quality filtering)
+2. Error-correction of reads with tadpole.sh
+3. Assembly of reads with skesa
+4. Polishing of assembly with pilon
+
+
+## Usage
 The first script, `assemble.py`, operates on a single sample at a time.
 
 ```bash
@@ -31,10 +39,10 @@ Options:
 
 ```
 
-### Python (3.6) Dependencies
+## Python (3.6) Dependencies
 - click
 
-### External Dependencies
+## External Dependencies
 **NOTE:** All external dependencies must be available via PATH.
 
 *Versions confirmed to work are in brackets.*
