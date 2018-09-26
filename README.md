@@ -6,7 +6,7 @@ Two simple scripts to assemble prokaryotic genomes using paired-end reads.
 1. QC on reads with bbduk.sh (adapter trimming/quality filtering)
 2. Error-correction of reads with tadpole.sh
 3. Assembly of reads with skesa
-4. Alignment of error-corrected reads against draft assembly
+4. Alignment of error-corrected reads against draft assembly with bbmap.sh
 5. Polishing of assembly with pilon
 
 
