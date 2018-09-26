@@ -36,18 +36,18 @@ def convert_to_path(ctx, param, value):
               type=click.Path(exists=True),
               required=False,
               default=None,
-              help='Path to forward reads (R1). Only used for hybrid assembly.',
+              help='Path to forward reads (R1).',
               callback=convert_to_path)
 @click.option('-2', '--rev_reads',
               type=click.Path(exists=True),
               required=False,
               default=None,
-              help='Path to reverse reads (R2). Only used for hybrid assembly.',
+              help='Path to reverse reads (R2).',
               callback=convert_to_path)
 @click.option('-o', '--out_dir',
               type=click.Path(exists=False),
               required=True,
-              help='Root directory to store all output files',
+              help='Root directory to store all output files.',
               callback=convert_to_path)
 @click.option('--version',
               help='Specify this flag to print the version and exit.',

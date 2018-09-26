@@ -35,23 +35,23 @@ def convert_to_path(ctx, param, value):
 @click.option('-i', '--input_dir',
               type=click.Path(exists=False),
               required=True,
-              help='Directory containing all *.fastq.gz files to assemble',
+              help='Directory containing all *.fastq.gz files to assemble.',
               callback=convert_to_path)
 @click.option('-o', '--out_dir',
               type=click.Path(exists=False),
               required=True,
-              help='Root directory to store all output files',
+              help='Root directory to store all output files.',
               callback=convert_to_path)
 @click.option('-f', '--fwd_id',
               type=click.STRING,
               required=False,
               default="_R1",
-              help='Pattern to detect forward reads. Defaults to "_R1"')
+              help='Pattern to detect forward reads. Defaults to "_R1".')
 @click.option('-r', '--rev_id',
               type=click.STRING,
               required=False,
               default="_R2",
-              help='Pattern to detect reverse reads. Defaults to "_R2"')
+              help='Pattern to detect reverse reads. Defaults to "_R2".')
 def assemble_dir(input_dir, out_dir, fwd_id, rev_id):
     os.makedirs(out_dir, exist_ok=True)
     logging.info(f"Created output directory {out_dir}")
