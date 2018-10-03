@@ -3,7 +3,7 @@ import click
 import logging
 
 from pathlib import Path
-from assemble import assembly_pipeline, clean_up
+from ProkaryoteAssembly.assemble import assembly_pipeline, clean_up
 
 __version__ = "0.0.1"
 __author__ = "Forest Dussault"

@@ -4,7 +4,7 @@ import shutil
 import logging
 from pathlib import Path
 
-from accessories import print_version, convert_to_path, run_subprocess, check_all_dependencies
+from ProkaryoteAssembly.accessories import print_version, convert_to_path, run_subprocess, check_all_dependencies
 
 __version__ = "0.0.1"
 __author__ = "Forest Dussault"

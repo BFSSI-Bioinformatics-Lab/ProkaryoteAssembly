@@ -2,7 +2,7 @@ import logging
 import shutil
 from pathlib import Path
 from subprocess import Popen, PIPE
-from config import DEPENDENCIES
+from ProkaryoteAssembly.config import DEPENDENCIES
 
 
 def dependency_check(dependency: str) -> bool:
