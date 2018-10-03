@@ -14,7 +14,7 @@ Two simple scripts to assemble prokaryotic genomes using paired-end reads.
 The first script, `prokaryote_assemble.py`, operates on a single sample at a time.
 
 ```bash
-Usage: assemble.py [OPTIONS]
+Usage: prokaryote_assemble.py [OPTIONS]
 
 Options:
   -1, --fwd_reads PATH  Path to forward reads (R1).  [required]
@@ -28,7 +28,7 @@ The second script, `prokaryote_assemble_dir.py`, will detect all *.fastq.gz file
 a directory and run the assembly pipeline on each sample it can pair.
 
 ```bash
-Usage: assemble_dir.py [OPTIONS]
+Usage: prokaryote_assemble_dir.py [OPTIONS]
 
 Options:
   -i, --input_dir PATH  Directory containing all *.fastq.gz files to assemble.
