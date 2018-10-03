@@ -1,5 +1,5 @@
 import setuptools
-from ProkaryoteAssembly.assemble import __version__, __author__, __email__
+from ProkaryoteAssembly.prokaryote_assemble import __version__, __author__, __email__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -16,5 +16,5 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/bfssi-forest-dussault/ProkaryoteAssembly",
     packages=setuptools.find_packages(),
-    scripts=['ProkaryoteAssembly/assemble.py', 'ProkaryoteAssembly/assembly_dir.py']
+    scripts=['ProkaryoteAssembly/prokaryote_assemble.py', 'ProkaryoteAssembly/prokaryote_assemble_dir.py']
 )
