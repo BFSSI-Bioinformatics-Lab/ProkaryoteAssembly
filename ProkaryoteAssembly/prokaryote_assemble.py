@@ -6,10 +6,6 @@ from pathlib import Path
 
 from ProkaryoteAssembly.accessories import print_version, convert_to_path, run_subprocess, check_all_dependencies
 
-__version__ = "0.0.1"
-__author__ = "Forest Dussault"
-__email__ = "forest.dussault@canada.ca"
-
 script = os.path.basename(__file__)
 logger = logging.getLogger()
 logging.basicConfig(
