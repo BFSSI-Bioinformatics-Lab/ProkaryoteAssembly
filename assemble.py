@@ -3,7 +3,8 @@ import click
 import shutil
 import logging
 from pathlib import Path
-from subprocess import Popen, PIPE
+
+from accessories import print_version, convert_to_path, run_subprocess, check_all_dependencies
 
 __version__ = "0.0.1"
 __author__ = "Forest Dussault"
@@ -13,22 +14,7 @@ script = os.path.basename(__file__)
 logger = logging.getLogger()
 logging.basicConfig(
     format=f'\033[92m \033[1m {script}:\033[0m %(message)s ',
-    level=logging.DEBUG)
-
-
-def print_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    logging.info(f"Version: {__version__}")
-    logging.info(f"Author: {__author__}")
-    logging.info(f"Email: {__email__}")
-    quit()
-
-
-def convert_to_path(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    return Path(value)
+    level=logging.INFO)
 
 
 @click.command()
@@ -54,8 +40,11 @@ def convert_to_path(ctx, param, value):
               callback=print_version,
               expose_value=False)
 def assemble(fwd_reads, rev_reads, out_dir):
+    check_all_dependencies()
+
     sample_id = get_id(fwd_reads=fwd_reads, rev_reads=rev_reads)
     logging.info(f"Starting ProkaryoteAssembly!")
+
     assembly_pipeline(fwd_reads=fwd_reads,
                       rev_reads=rev_reads,
                       out_dir=out_dir,
@@ -86,23 +75,6 @@ def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id
     polished_assembly = call_pilon(out_dir=out_dir, assembly=assembly, prefix=sample_id, bamfile=bamfile)
     shutil.move(src=str(polished_assembly), dst=str(out_dir / polished_assembly.name.replace(".fasta", ".pilon.fasta")))
     return polished_assembly
-
-
-def run_subprocess(cmd: str, get_stdout=False):
-    if get_stdout:
-        p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
-        out, err = p.communicate()
-        out = out.decode().strip()
-        err = err.decode().strip()
-        if out != "":
-            return out
-        elif err != "":
-            return err
-        else:
-            return ""
-    else:
-        p = Popen(cmd, shell=True)
-        p.wait()
 
 
 def get_id(fwd_reads: Path, rev_reads: Path) -> str:
