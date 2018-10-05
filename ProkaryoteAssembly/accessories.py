@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 from subprocess import Popen, PIPE
 from ProkaryoteAssembly.config import DEPENDENCIES
+from setup import __version__, __author__, __email__
 
 
 def dependency_check(dependency: str) -> bool:
