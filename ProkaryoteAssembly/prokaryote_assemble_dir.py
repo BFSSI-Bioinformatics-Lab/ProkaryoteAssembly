@@ -6,31 +6,13 @@ import logging
 
 from pathlib import Path
 from ProkaryoteAssembly.prokaryote_assemble import assembly_pipeline, clean_up
-
-__version__ = "0.0.1"
-__author__ = "Forest Dussault"
-__email__ = "forest.dussault@canada.ca"
+from ProkaryoteAssembly.accessories import print_version, convert_to_path
 
 script = os.path.basename(__file__)
 logger = logging.getLogger()
 logging.basicConfig(
     format=f'\033[92m \033[1m {script}:\033[0m %(message)s ',
     level=logging.DEBUG)
-
-
-def print_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    logging.info(f"Version: {__version__}")
-    logging.info(f"Author: {__author__}")
-    logging.info(f"Email: {__email__}")
-    quit()
-
-
-def convert_to_path(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    return Path(value)
 
 
 @click.command()
@@ -54,6 +36,12 @@ def convert_to_path(ctx, param, value):
               required=False,
               default="_R2",
               help='Pattern to detect reverse reads. Defaults to "_R2".')
+@click.option('--version',
+              help='Specify this flag to print the version and exit.',
+              is_flag=True,
+              is_eager=True,
+              callback=print_version,
+              expose_value=False)
 def assemble_dir(input_dir, out_dir, fwd_id, rev_id):
     os.makedirs(out_dir, exist_ok=True)
     logging.info(f"Created output directory {out_dir}")
