@@ -1,4 +1,5 @@
 import setuptools
+from ProkaryoteAssembly.config import __email__, __author__, __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
