@@ -66,9 +66,9 @@ def assemble_dir(input_dir, out_dir, fwd_id, rev_id, cleanup):
         os.makedirs(sample_out_dir, exist_ok=True)
         assembly_pipeline(fwd_reads=r1, rev_reads=r2, out_dir=sample_out_dir, sample_id=sample_id)
         if cleanup:
-            total_cleanup(input_dir=out_dir)
+            total_cleanup(input_dir=sample_out_dir)
         else:
-            basic_cleanup(input_dir=out_dir)
+            basic_cleanup(input_dir=sample_out_dir)
             logging.info(f"Pipeline complete! Results available in {out_dir}")
 
 
