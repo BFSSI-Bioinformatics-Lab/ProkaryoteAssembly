@@ -5,7 +5,7 @@ import click
 import logging
 
 from pathlib import Path
-from ProkaryoteAssembly.prokaryote_assemble import assembly_pipeline, clean_up
+from ProkaryoteAssembly.prokaryote_assemble import assembly_pipeline, basic_cleanup, total_cleanup
 from ProkaryoteAssembly.accessories import print_version, convert_to_path
 
 script = os.path.basename(__file__)
@@ -36,13 +36,18 @@ logging.basicConfig(
               required=False,
               default="_R2",
               help='Pattern to detect reverse reads. Defaults to "_R2".')
+@click.option('--cleanup',
+              help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
+              default=False,
+              is_flag=True,
+              expose_value=False)
 @click.option('--version',
               help='Specify this flag to print the version and exit.',
               is_flag=True,
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def assemble_dir(input_dir, out_dir, fwd_id, rev_id):
+def assemble_dir(input_dir, out_dir, fwd_id, rev_id, cleanup):
     os.makedirs(out_dir, exist_ok=True)
     logging.info(f"Created output directory {out_dir}")
 
@@ -60,8 +65,11 @@ def assemble_dir(input_dir, out_dir, fwd_id, rev_id):
         sample_out_dir = out_dir / sample_id
         os.makedirs(sample_out_dir, exist_ok=True)
         assembly_pipeline(fwd_reads=r1, rev_reads=r2, out_dir=sample_out_dir, sample_id=sample_id)
-        clean_up(input_dir=sample_out_dir)
-    logging.info(f"Pipeline complete! Results available in {out_dir}")
+        if cleanup:
+            total_cleanup(input_dir=out_dir)
+        else:
+            basic_cleanup(input_dir=out_dir)
+            logging.info(f"Pipeline complete! Results available in {out_dir}")
 
 
 def retrieve_fastqgz(directory: Path) -> [Path]:

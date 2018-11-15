@@ -37,7 +37,12 @@ logging.basicConfig(
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def assemble(fwd_reads, rev_reads, out_dir):
+@click.option('--cleanup',
+              help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
+              default=False,
+              is_flag=True,
+              expose_value=False)
+def assemble(fwd_reads, rev_reads, out_dir, cleanup):
     check_all_dependencies()
 
     sample_id = get_id(fwd_reads=fwd_reads, rev_reads=rev_reads)
@@ -47,10 +52,25 @@ def assemble(fwd_reads, rev_reads, out_dir):
                       rev_reads=rev_reads,
                       out_dir=out_dir,
                       sample_id=sample_id)
-    clean_up(input_dir=out_dir)
+
+    if cleanup:
+        total_cleanup(input_dir=out_dir)
+    else:
+        basic_cleanup(input_dir=out_dir)
 
 
-def clean_up(input_dir: Path):
+def total_cleanup(input_dir: Path):
+    all_files = list(input_dir.glob("*"))
+    for f in all_files:
+        if f.suffix is not ".fasta":
+            os.remove(str(f))
+    try:
+        shutil.rmtree(str(input_dir / 'pilon'))
+    except FileNotFoundError:
+        pass
+
+
+def basic_cleanup(input_dir: Path):
     all_files = list(input_dir.glob("*"))
     for f in all_files:
         if ".filtered" in f.name:
