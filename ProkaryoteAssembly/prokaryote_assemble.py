@@ -62,8 +62,11 @@ def assemble(fwd_reads, rev_reads, out_dir, cleanup):
 def total_cleanup(input_dir: Path):
     all_files = list(input_dir.glob("*"))
     for f in all_files:
-        if f.suffix is not ".fasta" and f.is_file():
-            os.remove(str(f))
+        if ".fasta" not in f.name:
+            try:
+                os.remove(str(f))
+            except:
+                pass
     try:
         shutil.rmtree(str(input_dir / 'pilon'))
     except FileNotFoundError:
