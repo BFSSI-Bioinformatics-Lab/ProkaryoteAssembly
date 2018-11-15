@@ -39,8 +39,8 @@ logging.basicConfig(
 @click.option('--cleanup',
               help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
               default=False,
-              is_flag=True,
-              expose_value=False)
+              required=False,
+              is_flag=True)
 @click.option('--version',
               help='Specify this flag to print the version and exit.',
               is_flag=True,

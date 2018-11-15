@@ -31,16 +31,16 @@ logging.basicConfig(
               required=True,
               help='Root directory to store all output files.',
               callback=convert_to_path)
+@click.option('--cleanup',
+              help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
+              default=False,
+              required=False,
+              is_flag=True)
 @click.option('--version',
               help='Specify this flag to print the version and exit.',
               is_flag=True,
               is_eager=True,
               callback=print_version,
-              expose_value=False)
-@click.option('--cleanup',
-              help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
-              default=False,
-              is_flag=True,
               expose_value=False)
 def assemble(fwd_reads, rev_reads, out_dir, cleanup):
     check_all_dependencies()
