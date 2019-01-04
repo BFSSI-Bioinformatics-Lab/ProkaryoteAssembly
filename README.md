@@ -9,6 +9,10 @@ Two simple scripts to assemble prokaryotic genomes using paired-end reads.
 4. Alignment of error-corrected reads against draft assembly with bbmap.sh
 5. Polishing of assembly with pilon
 
+## Installation
+```
+pip install ProkaryoteAssembly
+```
 
 ## Usage
 The first script, `prokaryote_assemble.py`, operates on a single sample at a time.
