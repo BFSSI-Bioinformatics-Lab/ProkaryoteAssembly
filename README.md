@@ -56,10 +56,9 @@ Options:
 - [samtools](http://www.htslib.org/download/) (samtools 1.8 using htslib 1.8)
 - [pilon](https://github.com/broadinstitute/pilon/wiki) (Pilon version 1.22)
 
-*Note for pilon:*
-Need to add something like this to your PATH so pilon can be called by the script:
+*Note:*
+Strongly recommend installing pilon via conda e.g.
+https://bioconda.github.io/recipes/pilon/README.html
 ```
-# pilon
-export PATH="/some/path/pilon-1.22:$PATH"
-alias pilon="java -jar /some/path/pilon-1.22/pilon-1.22.jar"
+conda install pilon
 ```
