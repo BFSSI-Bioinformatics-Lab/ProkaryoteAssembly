@@ -53,5 +53,13 @@ Options:
 *Versions confirmed to work are in brackets.*
 - [skesa](https://github.com/ncbi/SKESA) (SKESA v.2.1-SVN_551987:557549M)
 - [BBMap](https://sourceforge.net/projects/bbmap/) (BBMap version 38.22)
-- [pilon](https://github.com/broadinstitute/pilon/wiki) (Pilon version 1.22)
 - [samtools](http://www.htslib.org/download/) (samtools 1.8 using htslib 1.8)
+- [pilon](https://github.com/broadinstitute/pilon/wiki) (Pilon version 1.22)
+
+*Note for pilon:*
+Need to add something like this to your PATH so pilon can be called by the script:
+```
+# pilon
+export PATH="/some/path/pilon-1.22:$PATH"
+alias pilon="java -jar /some/path/pilon-1.22/pilon-1.22.jar"
+```
