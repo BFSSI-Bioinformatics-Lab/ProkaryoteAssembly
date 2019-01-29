@@ -19,7 +19,8 @@ logging.basicConfig(
 @click.option('-i', '--input_dir',
               type=click.Path(exists=False),
               required=True,
-              help='Directory containing all *.fastq.gz files to assemble.',
+              help='Directory containing all *.fastq.gz files to assemble.'
+                   'NOTE: Files must be gzipped in order to be detected.',
               callback=convert_to_path)
 @click.option('-o', '--out_dir',
               type=click.Path(exists=False),
@@ -36,6 +37,12 @@ logging.basicConfig(
               required=False,
               default="_R2",
               help='Pattern to detect reverse reads. Defaults to "_R2".')
+@click.option('-m', '--memory',
+              type=click.STRING,
+              required=False,
+              default='4g',
+              help='Memory to allocate to pilon call. Defaults to 4g (i.e. pilon -Xmx4g). May need to provide a large '
+                   'amount of memory for large read sets/assemblies.')
 @click.option('--cleanup',
               help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
               default=False,
@@ -47,7 +54,7 @@ logging.basicConfig(
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def assemble_dir(input_dir, out_dir, fwd_id, rev_id, cleanup):
+def assemble_dir(input_dir, out_dir, fwd_id, rev_id, memory, cleanup):
     os.makedirs(out_dir, exist_ok=True)
     logging.info(f"Created output directory {out_dir}")
 
@@ -64,7 +71,7 @@ def assemble_dir(input_dir, out_dir, fwd_id, rev_id, cleanup):
                               forward_id=fwd_id, reverse_id=rev_id)
         sample_out_dir = out_dir / sample_id
         os.makedirs(sample_out_dir, exist_ok=True)
-        assembly_pipeline(fwd_reads=r1, rev_reads=r2, out_dir=sample_out_dir, sample_id=sample_id)
+        assembly_pipeline(fwd_reads=r1, rev_reads=r2, out_dir=sample_out_dir, sample_id=sample_id, memory=memory)
         if cleanup:
             total_cleanup(input_dir=sample_out_dir)
         else:
@@ -77,7 +84,7 @@ def retrieve_fastqgz(directory: Path) -> [Path]:
     :param directory: Path to folder containing output from MiSeq run
     :return: LIST of all .fastq.gz files in directory
     """
-    fastq_file_list = list(directory.glob("*.f*q*"))
+    fastq_file_list = list(directory.glob("*.f*q.gz"))
     return fastq_file_list
 
 

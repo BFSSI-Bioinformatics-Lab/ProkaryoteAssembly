@@ -19,12 +19,12 @@ logging.basicConfig(
 @click.option('-1', '--fwd_reads',
               type=click.Path(exists=True),
               required=True,
-              help='Path to forward reads (R1).',
+              help='Path to forward reads (R1) (gzipped FASTQ).',
               callback=convert_to_path)
 @click.option('-2', '--rev_reads',
               type=click.Path(exists=True),
               required=True,
-              help='Path to reverse reads (R2).',
+              help='Path to reverse reads (R2) (gzipped FASTQ).',
               callback=convert_to_path)
 @click.option('-o', '--out_dir',
               type=click.Path(exists=False),
@@ -88,12 +88,12 @@ def basic_cleanup(input_dir: Path):
         pass
 
 
-def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str):
+def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str, memory: str):
     fwd_reads, rev_reads = call_bbduk(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     fwd_reads, rev_reads = call_tadpole(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     assembly = call_skesa(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir, sample_id=sample_id)
     bamfile = call_bbmap(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir, assembly=assembly)
-    polished_assembly = call_pilon(out_dir=out_dir, assembly=assembly, prefix=sample_id, bamfile=bamfile)
+    polished_assembly = call_pilon(out_dir=out_dir, assembly=assembly, prefix=sample_id, bamfile=bamfile, memory=memory)
     shutil.move(src=str(polished_assembly), dst=str(out_dir / polished_assembly.name.replace(".fasta", ".pilon.fasta")))
     return polished_assembly
 
@@ -106,10 +106,10 @@ def get_id(fwd_reads: Path, rev_reads: Path) -> str:
         return element_1
 
 
-def call_pilon(bamfile: Path, out_dir: Path, assembly: Path, prefix: str) -> Path:
+def call_pilon(bamfile: Path, out_dir: Path, assembly: Path, prefix: str, memory: str) -> Path:
     out_dir = out_dir / 'pilon'
     os.makedirs(str(out_dir), exist_ok=True)
-    cmd = f"pilon -Xmx128g --genome {assembly} --bam {bamfile} --outdir {out_dir} --output {prefix}"
+    cmd = f"pilon -Xmx{memory} --genome {assembly} --bam {bamfile} --outdir {out_dir} --output {prefix}"
     run_subprocess(cmd)
     polished_assembly = Path(list(out_dir.glob("*.fasta"))[0])
     return polished_assembly
