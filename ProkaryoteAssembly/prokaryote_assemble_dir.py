@@ -76,7 +76,8 @@ def assemble_dir(input_dir, out_dir, fwd_id, rev_id, memory, cleanup):
             total_cleanup(input_dir=sample_out_dir)
         else:
             basic_cleanup(input_dir=sample_out_dir)
-            logging.info(f"Pipeline complete! Results available in {out_dir}")
+            logging.info(f"Assembly complete for {sample_id} ({out_dir})")
+    logging.info("Script complete!")
 
 
 def retrieve_fastqgz(directory: Path) -> [Path]:
