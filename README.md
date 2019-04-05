@@ -24,6 +24,7 @@ Options:
   -1, --fwd_reads PATH  Path to forward reads (R1).  [required]
   -2, --rev_reads PATH  Path to reverse reads (R2).  [required]
   -o, --out_dir PATH    Root directory to store all output files.  [required]
+  --cleanup             Specify this flag to remove everything except the final assembly upon completion.
   --version             Specify this flag to print the version and exit.
   --help                Show this message and exit.
 ```
@@ -40,6 +41,7 @@ Options:
   -o, --out_dir PATH    Root directory to store all output files.  [required]
   -f, --fwd_id TEXT     Pattern to detect forward reads. Defaults to "_R1".
   -r, --rev_id TEXT     Pattern to detect reverse reads. Defaults to "_R2".
+  --cleanup             Specify this flag to remove everything except the final assembly upon completion.
   --help                Show this message and exit.
 
 ```
