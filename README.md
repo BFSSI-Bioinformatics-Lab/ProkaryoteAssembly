@@ -17,7 +17,7 @@ pip install ProkaryoteAssembly
 ## Usage
 The first script, `prokaryote_assemble.py`, operates on a single sample at a time.
 
-```bash
+```
 Usage: prokaryote_assemble.py [OPTIONS]
 
 Options:
@@ -38,7 +38,7 @@ Options:
 The second script, `prokaryote_assemble_dir.py`, will detect all *.fastq.gz files in
 a directory and run the assembly pipeline on each sample it can pair.
 
-```bash
+```
 Usage: prokaryote_assemble_dir.py [OPTIONS]
 
 Options:
@@ -48,8 +48,8 @@ Options:
   -o, --out_dir PATH    Root directory to store all output files.  [required]
   -f, --fwd_id TEXT     Pattern to detect forward reads. Defaults to "_R1".
   -r, --rev_id TEXT     Pattern to detect reverse reads. Defaults to "_R2".
-  -m, --memory TEXT     Memory to allocate to pilon call. Defaults to 4g (i.e.
-                        pilon -Xmx4g). May need to provide a large amount of
+  -m, --memory TEXT     Memory to allocate to pilon call. Defaults to 8g (i.e.
+                        pilon -Xmx8g). May need to provide a large amount of
                         memory for large read sets/assemblies.
   --cleanup             Specify this flag to delete all intermediary files
                         except the resulting FASTA assembly.

@@ -40,9 +40,9 @@ logging.basicConfig(
 @click.option('-m', '--memory',
               type=click.STRING,
               required=False,
-              default='4g',
-              help='Memory to allocate to pilon call. Defaults to 4g (i.e. pilon -Xmx4g). May need to provide a large '
-                   'amount of memory for large read sets/assemblies.')
+              default='8g',
+              help='Memory to allocate to pilon call. Defaults to "8g" (i.e. pilon -Xmx8g). May need to provide a large'
+                   ' amount of memory for large read sets/assemblies.')
 @click.option('--cleanup',
               help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
               default=False,
