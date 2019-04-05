@@ -31,6 +31,11 @@ logging.basicConfig(
               required=True,
               help='Root directory to store all output files.',
               callback=convert_to_path)
+@click.option('-m', '--memory',
+              type=click.STRING,
+              required=False,
+              help='Amount of memory to allocate to job. e.g. "8g". Defaults to 8g.',
+              default='8g')
 @click.option('--cleanup',
               help='Specify this flag to delete all intermediary files except the resulting FASTA assembly.',
               default=False,
@@ -42,16 +47,22 @@ logging.basicConfig(
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def assemble(fwd_reads, rev_reads, out_dir, cleanup):
+def assemble(fwd_reads, rev_reads, out_dir, memory, cleanup):
     check_all_dependencies()
 
     sample_id = get_id(fwd_reads=fwd_reads, rev_reads=rev_reads)
     logging.info(f"Starting ProkaryoteAssembly!")
+    if out_dir.exists():
+        logging.error(f"ERROR: Output directory {out_dir} already exists. Specify a directory that does not yet exist.")
+        quit()
+    else:
+        out_dir.mkdir(parents=True)
 
     assembly_pipeline(fwd_reads=fwd_reads,
                       rev_reads=rev_reads,
                       out_dir=out_dir,
-                      sample_id=sample_id)
+                      sample_id=sample_id,
+                      memory=memory)
 
     if cleanup:
         total_cleanup(input_dir=out_dir)
@@ -88,7 +99,7 @@ def basic_cleanup(input_dir: Path):
         pass
 
 
-def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str, memory: str):
+def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str, memory: str = '8g'):
     fwd_reads, rev_reads = call_bbduk(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     fwd_reads, rev_reads = call_tadpole(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     assembly = call_skesa(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir, sample_id=sample_id)
@@ -165,7 +176,7 @@ def call_bbduk(fwd_reads: Path, rev_reads: Path, out_dir: Path) -> tuple:
         return fwd_out, rev_out
 
     cmd = f"bbduk.sh in1={fwd_reads} in2={rev_reads} out1={fwd_out} out2={rev_out} " \
-          f"ref=adapters maq=12 qtrim=rl tpe tbo overwrite=t"
+        f"ref=adapters maq=12 qtrim=rl tpe tbo overwrite=t"
     run_subprocess(cmd)
     return fwd_out, rev_out
 

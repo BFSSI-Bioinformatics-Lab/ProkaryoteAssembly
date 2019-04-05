@@ -55,9 +55,12 @@ logging.basicConfig(
               callback=print_version,
               expose_value=False)
 def assemble_dir(input_dir, out_dir, fwd_id, rev_id, memory, cleanup):
-    os.makedirs(out_dir, exist_ok=True)
-    logging.info(f"Created output directory {out_dir}")
+    if out_dir.exists():
+        logging.error(f"ERROR: Output directory {out_dir} already exists. Specify a directory that does not yet exist.")
+        quit()
 
+    out_dir.mkdir(parents=True)
+    logging.info(f"Created output directory {out_dir}")
     logging.info(f"Finding FASTQ files in {input_dir}")
     fastq_file_list = retrieve_fastqgz(input_dir)
 
@@ -114,7 +117,6 @@ def get_readpair(sample_id: str, fastq_file_list: [Path], forward_id: str,
     :param reverse_id: ID indicating reverse read in filename (e.g. _R2)
     :return: the absolute filepaths of R1 and R2 for a given sample ID
     """
-
     r1, r2 = None, None
     for f in fastq_file_list:
         if sample_id in f.name:
