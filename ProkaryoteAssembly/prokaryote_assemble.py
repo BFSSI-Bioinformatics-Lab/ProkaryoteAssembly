@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import os
-import click
-import shutil
 import logging
+import os
+import shutil
 from pathlib import Path
+
+import click
 
 from ProkaryoteAssembly.accessories import print_version, convert_to_path, run_subprocess, check_all_dependencies
 
@@ -149,7 +150,8 @@ def call_bbmap(fwd_reads: Path, rev_reads: Path, out_dir: Path, assembly: Path) 
     if outbam.exists():
         return outbam
 
-    cmd = f"bbmap.sh in1={fwd_reads} in2={rev_reads} ref={assembly} out={outbam} overwrite=t bamscript=bs.sh; sh bs.sh"
+    cmd = f"bbmap.sh in1={fwd_reads} in2={rev_reads} ref={assembly} out={outbam} overwrite=t deterministic=t " \
+        f"bamscript=bs.sh; sh bs.sh"
     run_subprocess(cmd)
 
     sorted_bam_file = out_dir / outbam.name.replace(".bam", "_sorted.bam")
