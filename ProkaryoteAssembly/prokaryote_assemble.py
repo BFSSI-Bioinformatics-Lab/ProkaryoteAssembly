@@ -102,6 +102,7 @@ def basic_cleanup(input_dir: Path):
 
 
 def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str, memory: str = '8g'):
+    fwd_reads, rev_reads = call_repair(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     fwd_reads, rev_reads = call_bbduk(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     fwd_reads, rev_reads = call_tadpole(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     assembly = call_skesa(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir, sample_id=sample_id)
@@ -109,6 +110,16 @@ def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id
     polished_assembly = call_pilon(out_dir=out_dir, assembly=assembly, prefix=sample_id, bamfile=bamfile, memory=memory)
     shutil.move(src=str(polished_assembly), dst=str(out_dir / polished_assembly.name.replace(".fasta", ".pilon.fasta")))
     return polished_assembly
+
+
+def call_repair(fwd_reads: Path, rev_reads: Path, out_dir: Path) -> tuple:
+    logging.info("Attempting to repair reads")
+    fwd_out = out_dir / fwd_reads.name
+    rev_out = out_dir / rev_reads.name
+
+    cmd = f"repair.sh in={fwd_reads} in2={rev_reads} out={fwd_out} out2={rev_out} overwrite=t"
+    run_subprocess(cmd)
+    return fwd_out, rev_out
 
 
 def get_id(fwd_reads: Path, rev_reads: Path) -> str:
@@ -151,7 +162,7 @@ def call_bbmap(fwd_reads: Path, rev_reads: Path, out_dir: Path, assembly: Path) 
         return outbam
 
     cmd = f"bbmap.sh in1={fwd_reads} in2={rev_reads} ref={assembly} out={outbam} overwrite=t deterministic=t " \
-        f"bamscript=bs.sh; sh bs.sh"
+          f"bamscript=bs.sh; sh bs.sh"
     run_subprocess(cmd)
 
     sorted_bam_file = out_dir / outbam.name.replace(".bam", "_sorted.bam")
@@ -179,7 +190,7 @@ def call_bbduk(fwd_reads: Path, rev_reads: Path, out_dir: Path) -> tuple:
         return fwd_out, rev_out
 
     cmd = f"bbduk.sh in1={fwd_reads} in2={rev_reads} out1={fwd_out} out2={rev_out} " \
-        f"ref=adapters maq=12 qtrim=rl tpe tbo overwrite=t"
+          f"ref=adapters maq=12 qtrim=rl tpe tbo overwrite=t"
     run_subprocess(cmd)
     return fwd_out, rev_out
 
