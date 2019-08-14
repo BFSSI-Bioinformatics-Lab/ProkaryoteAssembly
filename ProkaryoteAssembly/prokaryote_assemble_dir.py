@@ -15,7 +15,8 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 
-@click.command()
+@click.command(help="Wrapper for prokaryote_assemble.py; given an input directory of paired-end reads, "
+                    "will attempt to make pairs and conduct assemblies.")
 @click.option('-i', '--input_dir',
               type=click.Path(exists=False),
               required=True,
