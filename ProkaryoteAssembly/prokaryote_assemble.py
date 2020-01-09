@@ -102,6 +102,7 @@ def basic_cleanup(input_dir: Path):
 
 
 def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str, memory: str = '8g'):
+    logging.info(f"Assembling {sample_id}")
     fwd_reads, rev_reads = call_repair(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     fwd_reads, rev_reads = call_bbduk(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
     fwd_reads, rev_reads = call_tadpole(fwd_reads=fwd_reads, rev_reads=rev_reads, out_dir=out_dir)
@@ -113,7 +114,6 @@ def assembly_pipeline(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id
 
 
 def call_repair(fwd_reads: Path, rev_reads: Path, out_dir: Path) -> tuple:
-    logging.info("Attempting to repair reads")
     fwd_out = out_dir / fwd_reads.name
     rev_out = out_dir / rev_reads.name
 
@@ -145,7 +145,7 @@ def call_skesa(fwd_reads: Path, rev_reads: Path, out_dir: Path, sample_id: str) 
     if assembly_out.exists():
         return assembly_out
 
-    cmd = f'skesa --use_paired_ends --gz --fastq "{fwd_reads},{rev_reads}" --contigs_out {assembly_out}'
+    cmd = f'skesa --use_paired_ends --fastq "{fwd_reads},{rev_reads}" --contigs_out {assembly_out}'
     run_subprocess(cmd)
     return assembly_out
 
@@ -182,17 +182,38 @@ def call_tadpole(fwd_reads: Path, rev_reads: Path, out_dir: Path) -> tuple:
     return fwd_out, rev_out
 
 
-def call_bbduk(fwd_reads: Path, rev_reads: Path, out_dir: Path) -> tuple:
-    fwd_out = out_dir / fwd_reads.name.replace(".fastq.gz", ".filtered.fastq.gz")
-    rev_out = out_dir / rev_reads.name.replace(".fastq.gz", ".filtered.fastq.gz")
-
-    if fwd_out.exists() and rev_out.exists():
-        return fwd_out, rev_out
-
+def bbduk_trim_adapters(fwd_reads: Path, rev_reads: Path, outdir: Path) -> tuple:
+    fwd_out = outdir / fwd_reads.name.replace(".fastq.gz", ".cleaned.fastq.gz")
+    rev_out = outdir / rev_reads.name.replace(".fastq.gz", ".cleaned.fastq.gz")
+    stats_out = outdir / 'adapter_trimming_stats.txt'
     cmd = f"bbduk.sh in1={fwd_reads} in2={rev_reads} out1={fwd_out} out2={rev_out} " \
-          f"ref=adapters maq=12 qtrim=rl tpe tbo overwrite=t"
+          f"ref=adapters tpe tbo overwrite=t unbgzip=f ktrim=r k=23 mink=11 hdist=1 stats={stats_out}"
     run_subprocess(cmd)
     return fwd_out, rev_out
+
+
+def bbduk_qc_filtering(fwd_reads: Path, rev_reads: Path, outdir: Path) -> tuple:
+    fwd_out = outdir / fwd_reads.name.replace(".fastq.gz", ".filtered.fastq.gz")
+    rev_out = outdir / rev_reads.name.replace(".fastq.gz", ".filtered.fastq.gz")
+    stats_out = outdir / 'quality_filtering_stats.txt'
+    cmd = f"bbduk.sh in1={fwd_reads} in2={rev_reads} out1={fwd_out} out2={rev_out} unbgzip=f qtrim=rl " \
+          f"trimq=10 2> {stats_out}"
+    run_subprocess(cmd)
+    return fwd_out, rev_out
+
+
+def call_bbduk(fwd_reads: Path, rev_reads: Path, outdir: Path) -> tuple:
+    """
+    System call to bbduk.sh to perform adapter trimming/quality filtering on a given read pair
+    :param fwd_reads: Path to forward reads (.fastq.gz)
+    :param rev_reads: Path to reverse reads (.fastq.gz)
+    :param outdir: Path to desired output directory
+    :return: tuple(filtered forward reads, filtered reverse reads)
+    """
+    fwd_reads_trimmed, rev_reads_trimmed = bbduk_trim_adapters(fwd_reads=fwd_reads, rev_reads=rev_reads, outdir=outdir)
+    fwd_reads_filtered, rev_reads_filtered = bbduk_qc_filtering(fwd_reads=fwd_reads_trimmed,
+                                                                rev_reads=rev_reads_trimmed, outdir=outdir)
+    return fwd_reads_filtered, rev_reads_filtered
 
 
 if __name__ == "__main__":
